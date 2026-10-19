@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>فحص JAP الذكي | نموذج أولي</title>
+<meta name="description" content="صوّر سيارتك واحصل خلال دقيقة على تقرير صحة الطلاء ومؤشر خطر طريقك والباقة المناسبة من JAP.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./style.css">
+<script>window.__API_BASE__ = '';</script>
+</head>
+<body>
+<header class="topbar">
+  <a href="#" class="brand" data-nav="scan" aria-label="فحص JAP الذكي">
+    <span class="wordmark">JAP</span>
+    <span class="brand-sub">فحص الطلاء الذكي</span>
+  </a>
+  <nav class="topnav">
+    <a href="#" data-nav="scan" class="navlink is-active">الفحص</a>
+    <a href="#team" data-nav="team" class="navlink">لوحة الفريق</a>
+  </nav>
+</header>
+
+<main id="app">
+  <!-- ===================== SCAN FLOW ===================== -->
+  <section id="view-scan" class="view">
+    <ol class="stepper" aria-label="مراحل الفحص">
+      <li data-step="1" class="is-current"><span>1</span>الصور</li>
+      <li data-step="2"><span>2</span>سيارتك وطريقك</li>
+      <li data-step="3"><span>3</span>التقرير</li>
+    </ol>
+
+    <!-- Step 1 -->
+    <div class="step" id="step-1">
+      <div class="intro">
+        <p class="eyebrow">نموذج أولي · قبل الكشف المجاني في الفرع</p>
+        <h1>صوّر سيارتك، ونقول لك وش تحتاج بالضبط</h1>
+        <p class="lead">ارفع من صورة إلى ست صور من جوالك. يقرأ الذكاء الاصطناعي آثار الحصى والدوامات والخدوش، ثم يحسب خطر طريقك ويقترح الباقة وسعرها.</p>
+      </div>
+
+      <div class="demo-row">
+        <span class="muted">ما معك سيارة الحين؟</span>
+        <button class="chip" data-demo="sedan">جرّب: سيدان أسود</button>
+        <button class="chip" data-demo="lc">جرّب: لاندكروزر أبيض</button>
+      </div>
+
+      <div class="slots" id="slots"></div>
+
+      <div class="tips">
+        <strong>للحصول على أدق نتيجة</strong>
+        <ul>
+          <li>صوّر في النهار أو تحت إضاءة قوية، والسيارة نظيفة قدر الإمكان.</li>
+          <li>صورة قريبة للكبوت والصدام من زاوية مائلة تُظهر نقاط الحصى بوضوح.</li>
+          <li>تجنب الصور البعيدة جداً أو المقصوصة.</li>
+        </ul>
+      </div>
+
+      <div class="actions sticky-actions">
+        <button class="btn btn-primary" id="to-step-2" disabled>التالي: سيارتك وطريقك</button>
+        <span class="muted small" id="photo-count">لم تُضف صور بعد</span>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step" id="step-2" hidden>
+      <div class="grid-2">
+        <div class="card">
+          <h2>السيارة</h2>
+          <label class="field"><span>الموديل</span>
+            <input id="car_model" type="text" placeholder="مثال: لاندكروزر، لكزس LX، تاهو" autocomplete="off"></label>
+          <div class="field-row">
+            <label class="field"><span>سنة الصنع</span>
+              <input id="car_year" type="text" inputmode="numeric" maxlength="4" placeholder="2025"></label>
+            <label class="field"><span>عمر السيارة</span>
+              <select id="car_age">
+                <option value="new">جديدة / صفر</option>
+                <option value="lt1">أقل من سنة</option>
+                <option value="1to3">من سنة إلى 3</option>
+                <option value="gt3">أكثر من 3 سنوات</option>
+              </select></label>
+          </div>
+          <div class="field"><span>وين توقف السيارة غالباً؟</span>
+            <div class="seg" data-name="parking">
+              <button data-v="outdoor" class="is-on">تحت الشمس</button>
+              <button data-v="shaded">مظلة</button>
+              <button data-v="indoor">قراج مغلق</button>
+            </div></div>
+          <div class="field"><span>اللمسة المفضلة</span>
+            <div class="seg" data-name="finish">
+              <button data-v="gloss" class="is-on">لامع</button>
+              <button data-v="matte">مطفي</button>
+            </div></div>
+          <div class="field"><span>أولويتك</span>
+            <div class="seg" data-name="focus">
+              <button data-v="full" class="is-on">حماية متكاملة</button>
+              <button data-v="budget">الأساسي بأقل تكلفة</button>
+            </div></div>
+        </div>
+
+        <div class="card">
+          <h2>طريقك</h2>
+          <label class="field"><span>كم كيلو تمشي يومياً؟ <b id="daily_km_v" class="num">40</b> كم</span>
+            <input id="daily_km" type="range" min="5" max="200" step="5" value="40"></label>
+          <label class="field"><span>كم منها على طرق سريعة (الدائري، خريص، الملك فهد…)؟ <b id="highway_v" class="num">40</b>%</span>
+            <input id="highway_share" type="range" min="0" max="100" step="5" value="40"></label>
+          <div class="field"><span>رحلات السفر بالسيارة في السنة (ذهاب وعودة)</span>
+            <div class="trips" id="trips"></div></div>
+        </div>
+      </div>
+
+      <div class="actions sticky-actions">
+        <button class="btn btn-ghost" id="back-1">رجوع</button>
+        <button class="btn btn-primary" id="run-scan">ابدأ الفحص</button>
+      </div>
+    </div>
+
+    <!-- Step 2.5: analyzing -->
+    <div class="step" id="step-analyze" hidden>
+      <div class="analyze">
+        <div class="analyze-frame"><img id="analyze-img" alt=""><div class="scanline"></div></div>
+        <p class="analyze-msg" id="analyze-msg">نقرأ الصور…</p>
+        <p class="muted small">يستغرق عادة من 10 إلى 30 ثانية</p>
+      </div>
+    </div>
+
+    <!-- Step 3: report -->
+    <div class="step" id="step-3" hidden>
+      <div id="report"></div>
+    </div>
+  </section>
+
+  <!-- ===================== TEAM DASHBOARD ===================== -->
+  <section id="view-team" class="view" hidden>
+    <div class="team-head">
+      <div>
+        <p class="eyebrow">للاستخدام الداخلي في فترة التجربة</p>
+        <h1 class="h-app">لوحة متابعة التجربة</h1>
+        <p class="muted">كل فحص يُسجَّل هنا. الفني يقارن تقرير الذكاء الاصطناعي بتقييمه عند وصول السيارة.</p>
+      </div>
+      <button class="btn btn-ghost" id="refresh-team">تحديث</button>
+    </div>
+    <div class="kpis" id="kpis"></div>
+    <div class="card table-card">
+      <div class="table-wrap">
+        <table class="leads">
+          <thead><tr>
+            <th>الوقت</th><th>السيارة</th><th>صحة الطلاء</th><th>خطر الطريق</th><th>الباقة المقترحة</th>
+            <th>العميل</th><th>الحالة</th><th>هل يطابق تقييم الفني؟</th>
+          </tr></thead>
+          <tbody id="leads-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card plan">
+      <h2>أهداف التجربة (14 يوماً)</h2>
+      <div class="plan-grid">
+        <div><b class="num" dir="ltr">70%+</b><span>تطابق مع تقييم الفني في نوع الضرر الأساسي</span></div>
+        <div><b class="num" dir="ltr">30%+</b><span>من يكمل الفحص يطلب موعداً</span></div>
+        <div><b class="num">90 ث</b><span>حداً أقصى لزمن الفحص من الرفع إلى التقرير</span></div>
+        <div><b class="num">20</b><span>عميلاً حقيقياً في فرع القادسية</span></div>
+      </div>
+      <p class="muted small">أوزان الدرجة ومعامل الحصى افتراضات أولية تُعاير من نتائج هذه التجربة.</p>
+    </div>
+  </section>
+</main>
+
+<!-- Booking dialog -->
+<dialog id="book-dialog" class="dialog">
+  <form method="dialog" id="book-form" class="dialog-body">
+    <h2>احجز موعد التركيب</h2>
+    <p class="muted small" id="book-summary"></p>
+    <label class="field"><span>الاسم</span><input name="name" required autocomplete="name"></label>
+    <label class="field"><span>رقم الجوال</span><input name="phone" required inputmode="tel" placeholder="05xxxxxxxx" autocomplete="tel"></label>
+    <div class="field"><span>الفرع</span>
+      <div class="seg" data-name="branch">
+        <button type="button" data-v="القادسية" class="is-on">القادسية · وادي الساحل</button>
+        <button type="button" data-v="الريان">الريان · طريق خريص</button>
+      </div></div>
+    <div class="field"><span>اليوم</span><div class="days" id="days"></div></div>
+    <div class="field"><span>طريقة التأكيد</span>
+      <div class="seg" data-name="pay">
+        <button type="button" data-v="deposit" class="is-on">عربون وتثبيت السعر</button>
+        <button type="button" data-v="none">حجز بدون دفع</button>
+      </div></div>
+    <p class="form-error" id="book-error" hidden></p>
+    <div class="actions">
+      <button type="button" class="btn btn-ghost" id="book-cancel">إلغاء</button>
+      <button type="submit" class="btn btn-primary" id="book-submit">تأكيد الحجز</button>
+    </div>
+    <p class="muted small">نموذج أولي: لا يتم تحصيل أي مبلغ ولا يُرسل الحجز لنظام JAP الفعلي.</p>
+  </form>
+</dialog>
+
+<input type="file" id="file-input" accept="image/*" hidden>
+<script type="module" src="./app.js"></script>
+</body>
+</html>
